@@ -8,7 +8,7 @@ def criar_tabelas():
     conexao = conectar_banco()
     cursor = conexao.cursor()
     
-    cursor.execute('''create table if not exists produto (id integer primary key, nome text, descricao text, valor real, codigo integer, estoque integer, categori text)''')
+    cursor.execute('''create table if not exists produto (id integer primary key, nome text, valor real, codigo integer, estoque integer, categoria text)''')
     
     cursor.execute('''create table if not exists usuarios (id integer primary key, cpf integer, nome text, senha text, classificacao text not null check( classificacao IN ('admin', 'usuario') ))''')
     
