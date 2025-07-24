@@ -9,7 +9,17 @@ janela.geometry ("500x300")
 janela.title ("Login e Cadastro")
 
 senha_usuario = "1234"
-cpf_usuario = "123456789"
+cpf_usuario = "12345678909"
+
+def validar_cpf (cpf: str) -> bool:
+    cpf = ''.join (filter (str.isdigit, cpf))
+    if len (cpf) != 11 or cpf == cpf [0] * 11:
+        return False
+    soma = sum (int (cpf [i]) * (10 - i) for i in range (9))
+    digito1 = (soma * 10 % 11) % 10
+    soma = sum (int (cpf [i]) * (11 - i) for i in range (10))
+    digito2 =  (soma * 10 % 11) % 10
+    return cpf [-2:] == f"{digito1}{digito2}"
 
 def login ():
     
@@ -34,6 +44,8 @@ def cadastro ():
 
     if not novo_cpf or not nova_senha or not confirmar:
         tkmb.showwarning ("Campos vazios", "Preencha todos os campos")
+    elif not validar_cpf(novo_cpf):
+        tkmb.showerror("Erro CPF", "CPF inválido")
     elif nova_senha != confirmar:
         tkmb.showerror ("Erro", "Senhas não coincidem")
     else:
