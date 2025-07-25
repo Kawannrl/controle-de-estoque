@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from interface import LoginApp
 
 ctk.set_appearance_mode ("dark")
 ctk.set_default_color_theme ("dark-blue")
@@ -8,16 +9,17 @@ class StockMasterApp (ctk.CTk):
         super ().__init__ ()
 
         self.title ("StockMaster - Controle de Estoques")
-        self.geometry ("500x300")
+        self.geometry ("300x200")
 
-        self.label = ctk.CTkLabel (self, text = "Olá, ", font = ctk.CTkFont (size = 20, weight = "bold"))
+        self.label = ctk.CTkLabel (self, text = "Bem Vindo ", font = ctk.CTkFont (size = 20, weight = "bold"))
         self.label.pack (pady = 20)
 
-        self.botao = ctk.CTkButton(self, text = "Clique Aqui", command = self.clicado)
+        self.botao = ctk.CTkButton(self, text = "Iniciar", command = self.abrir_login)
         self.botao.pack (pady = 10)
 
-    def clicado (self):
-        self.label.configure (text = "Botão foi clicado!")
+    def abrir_login (self):
+        self.destroy ()
+        LoginApp ()
 
 if __name__ == "__main__":
     app = StockMasterApp ()
