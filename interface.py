@@ -1,5 +1,6 @@
 import customtkinter as ctk
 import tkinter.messagebox as tkmb
+from estoque import Estoque
 
 ctk.set_appearance_mode ("dark")
 ctk.set_default_color_theme ("dark-blue")
