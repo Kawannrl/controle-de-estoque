@@ -36,6 +36,7 @@ def criar_usuario(cpf, nome, senha):
     else:
         cursor.execute(''' insert into usuarios(cpf, nome, senha, classificacao)
                 values (?, ?, ?,'usuario')''', (cpf, nome,senha))
+        
         conexao.commit()
         return True
 
