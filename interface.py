@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import tkinter.messagebox as tkmb
-from estoque import Estoque
+import app
 
 ctk.set_appearance_mode ("dark")
 ctk.set_default_color_theme ("dark-blue")
@@ -60,6 +60,9 @@ class LoginApp (ctk.CTk):
 
         self.cpf_cadastro = ctk.CTkEntry (cadastro_tab, placeholder_text = "CPF")
         self.cpf_cadastro.pack (padx = 10, pady = 10)
+        
+        self.nome_cadastro = ctk.CTkEntry (cadastro_tab, placeholder_text = "NOME")
+        self.nome_cadastro.pack (padx = 10, pady = 10)
 
         self.senha_cadastro = ctk.CTkEntry (cadastro_tab, placeholder_text = "Senha", show = "*")
         self.senha_cadastro.pack (padx = 10, pady = 10)
@@ -69,18 +72,20 @@ class LoginApp (ctk.CTk):
 
         ctk.CTkButton (cadastro_tab, text="Cadastrar", command = self.cadastro).pack (padx = 10, pady = 10)
 
-    def login (self):
-        cpf_input = self.cpf_entry.get ()
-        senha_input = self.senha_entry.get ()
-
-        if cpf_input == cpf_usuario and senha_input == senha_usuario:
-            tkmb.showinfo ("Login Realizado", "Login realizado com sucesso")
-        elif cpf_input != cpf_usuario and senha_input == senha_usuario:
-            tkmb.showerror ("Erro CPF", "CPF inválido")
-        elif cpf_input == cpf_usuario and senha_input != senha_usuario:
-            tkmb.showerror ("Erro senha", "Senha inválida")
+    def login(self):
+        usercpf = self.cpf_cadastro.get()
+        password = self.senha_cadastro.get()
+        
+        resultado = app.tentar_login(usercpf, password)
+        
+        if resultado == 0:
+            tkmb.showinfo("Bem-vindo, usuário!")
+            
+        elif resultado == 1:
+            tkmb.showinfo("Bem-vindo, admin!")
+            
         else:
-            tkmb.showerror ("Erro", "Senha e CPF inválidos")
+            tkmb.showerror("Falha ao realizar login", "CPF ou senha inválidos.")
 
     def cadastro (self):
         novo_cpf = self.cpf_cadastro.get ()
