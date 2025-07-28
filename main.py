@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from interface import LoginApp
+import database
 
 ctk.set_appearance_mode ("dark")
 ctk.set_default_color_theme ("dark-blue")
@@ -22,5 +23,7 @@ class StockMasterApp (ctk.CTk):
         LoginApp ()
 
 if __name__ == "__main__":
+    database.conectar_banco()
+    database.criar_tabelas()
     app = StockMasterApp ()
     app.mainloop ()

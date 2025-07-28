@@ -1,5 +1,10 @@
 import sqlite3
-from flask import session
+
+class Sessao:
+    usuario_logado = None
+    tipo_usuario = None
+    
+    
 def conectar_banco ():
     conexao = sqlite3.connect ("controle de estoque")
     return conexao
@@ -17,36 +22,48 @@ def criar_tabelas ():
 
     conexao.commit ()
     conexao.close ()
+
+def criar_usuario(cpf, nome, senha):
+    conexao = conectar_banco()
+    cursor = conexao.cursor()
+
+    cursor.execute('''select cpf from usuarios where cpf=?''', (cpf,))
+    usuario1 = cursor.fetchone()
     
-    def criar_usuario (cpf, nome, senha):
-        conexao = conectar_banco ()
-        cursor = conexao.cursor ()
-        cursor.execute (''' insert into usuarios (cpf, nome, senha, classificacao) values (?, ?, ?'usuario')''', (cpf, nome,senha))
-        conexao.commit ()
+    if usuario1:
+        print("o usuario já existe, tente outro cpf")
+        return False
+    else:
+        cursor.execute(''' insert into usuarios(cpf, nome, senha, classificacao)
+                values (?, ?, ?,'usuario')''', (cpf, nome,senha))
+        conexao.commit()
         return True
+
+def login(cpf, senha):
+    conexao = conectar_banco()
+    cursor = conexao.cursor()
     
-    def login (cpf, senha):
-        conexao = conectar_banco ()
-        cursor = conexao.cursor ()
-        cursor.execute ("select * from usuarios where cpf = ?", (cpf,))
-        usuario = cursor.fetchone ()
-        conexao.close ()
+    cursor.execute("SELECT * FROM usuarios WHERE cpf=?", (cpf,))
+    usuario = cursor.fetchone()
+    
+    conexao.close()
 
-        if usuario and usuario [3] == senha:
-            tipo = usuario [4]
-            if tipo == 'admin':
-                session ['ademin'] = usuario [1]
-                # return redirect(url_for('home1'))
-            else:
-                session ['usuario'] = usuario [1]
-                # return redirect(url_for('home'))
+    if usuario and usuario[3] == senha:
+        tipo = usuario[4]
+        Sessao.usuario_logado = usuario[1] 
+        Sessao.tipo_usuario = tipo
+        if tipo == 'admin':
+            return 1
         else:
-            print ("Usuário ou senha inválidos.")
+            return 0
+    else:
+        print("Usuário ou senha inválidos.")
+        return -1
 
-    def show_usuarios_cadastrados ():
-        conexao = conectar_banco ()
-        cursor = conexao.cursor ()
-        cursor.execute ('''selecte from * usuarios''')
-        usuarios = cursor.fetchall ()
-        conexao.close ()
-        return usuarios
+def show_usuarios_cadastrados ():
+    conexao = conectar_banco ()
+    cursor = conexao.cursor ()
+    cursor.execute ('''selecte from * usuarios''')
+    usuarios = cursor.fetchall ()
+    conexao.close ()
+    return usuarios
