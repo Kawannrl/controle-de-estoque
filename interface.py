@@ -1,6 +1,8 @@
 import customtkinter as ctk
 import tkinter.messagebox as tkmb
 import app
+from carrinho import CarrinhoApp
+from estoque import Estoque
 
 ctk.set_appearance_mode ("dark")
 ctk.set_default_color_theme ("dark-blue")
@@ -79,24 +81,22 @@ class LoginApp (ctk.CTk):
         resultado = app.tentar_login(usercpf, password)
         
         if resultado == 0:
-            tkmb.showinfo("Bem-vindo, usuário!")
-            
+            tkmb.showinfo("Login Funcionario","Bem-vindo, Funcionario!")
+            CarrinhoApp()
         elif resultado == 1:
-            tkmb.showinfo("Bem-vindo, admin!")
-            
+            tkmb.showinfo("Login admin","Bem-vindo, admin!")
+            Estoque()
         else:
             tkmb.showerror("Falha ao realizar login", "CPF ou senha inválidos.")
 
     def cadastro (self):
-        novo_cpf = self.cpf_cadastro.get ()
-        nova_senha = self.senha_cadastro.get ()
-        confirmar = self.confirmar_senha.get ()
+        
+        novo_cpf = self.cpf_cadastro.get()
+        novo_nome = self.nome_cadastro.get()
+        nova_senha = self.senha_cadastro.get()
+        
 
-        if not novo_cpf or not nova_senha or not confirmar:
-            tkmb.showwarning ("Campos vazios", "Preencha todos os campos")
-        elif not self.validar_cpf (novo_cpf):
-            tkmb.showerror ("Erro CPF", "CPF inválido")
-        elif nova_senha != confirmar:
-            tkmb.showerror ("Erro", "Senhas não coincidem")
+        if app.tentar_cadastro(novo_cpf, novo_nome, nova_senha):
+                tkmb.showinfo("cadastro realizado","cadastro realizado com sucesso")
         else:
-            tkmb.showinfo ("Cadastro", "Cadastro realizado com sucesso")    
+            tkmb.showerror("falha","falha ao realizar cadastro, tente novamente")  

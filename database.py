@@ -28,7 +28,7 @@ def criar_usuario(cpf, nome, senha):
     cursor = conexao.cursor()
 
     cursor.execute('''select cpf from usuarios where cpf=?''', (cpf,))
-    usuario1 = cursor.fetchone()
+    usuario1 = cursor.fetchall()
     
     if usuario1:
         print("o usuario já existe, tente outro cpf")

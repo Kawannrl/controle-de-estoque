@@ -2,6 +2,7 @@ import customtkinter as ctk
 from interface import LoginApp
 import database
 
+
 ctk.set_appearance_mode ("dark")
 ctk.set_default_color_theme ("dark-blue")
 
