@@ -9,7 +9,7 @@ class CarrinhoApp (ctk.CTk):
         super ().__init__ ()
         self.title ("Carrinho de Compras - Funcionário")
         self.geometry ("600x500")
-        self.resizable (False, False)
+        
 
         self.produtos = {
             "001": {"nome": "Arroz", "preco": 5.50},
@@ -120,4 +120,3 @@ class CarrinhoApp (ctk.CTk):
 
 if __name__ == "__main__":
     app = CarrinhoApp ()
-    app.mainloop ()
