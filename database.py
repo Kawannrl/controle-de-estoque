@@ -4,9 +4,8 @@ class Sessao:
     usuario_logado = None
     tipo_usuario = None
     
-    
 def conectar_banco ():
-    conexao = sqlite3.connect ("controle de estoque")
+    conexao = sqlite3.connect ("controle de estoque.db")
     return conexao
 
 def criar_tabelas ():
@@ -24,48 +23,49 @@ def criar_tabelas ():
     conexao.commit ()
     conexao.close ()
 
-def criar_usuario(cpf, nome, senha):
-    conexao = conectar_banco()
-    cursor = conexao.cursor()
+def criar_usuario (cpf, nome, senha):
+    conexao = conectar_banco ()
+    cursor = conexao.cursor ()
 
-    cursor.execute('''select cpf from usuarios where cpf=?''', (cpf,))
-    usuario1 = cursor.fetchall()
+    cursor.execute ('''select cpf from usuarios where cpf=?''', (cpf,))
+    usuario1 = cursor.fetchall ()
     
     if usuario1:
-        print("o usuario já existe, tente outro cpf")
+        print ("o usuario já existe, tente outro cpf")
         return False
     else:
-        cursor.execute(''' insert into usuarios(cpf, nome, senha, classificacao)
+        cursor.execute (''' insert into usuarios(cpf, nome, senha, classificacao)
                 values (?, ?, ?,'usuario')''', (cpf, nome,senha))
         
-        conexao.commit()
+        conexao.commit ()
+        conexao.close ()
         return True
 
-def login(cpf, senha):
-    conexao = conectar_banco()
-    cursor = conexao.cursor()
+def login (cpf, senha):
+    conexao = conectar_banco ()
+    cursor = conexao.cursor ()
     
-    cursor.execute("SELECT * FROM usuarios WHERE cpf=?", (cpf,))
-    usuario = cursor.fetchone()
+    cursor.execute ("SELECT * FROM usuarios WHERE cpf=?", (cpf,))
+    usuario = cursor.fetchone ()
     
-    conexao.close()
+    conexao.close ()
 
-    if usuario and usuario[3] == senha:
-        tipo = usuario[4]
-        Sessao.usuario_logado = usuario[1] 
+    if usuario and usuario [3] == senha:
+        tipo = usuario [4]
+        Sessao.usuario_logado = usuario [1] 
         Sessao.tipo_usuario = tipo
         if tipo == 'admin':
             return 1
         else:
             return 0
     else:
-        print("Usuário ou senha inválidos.")
+        print ("Usuário ou senha inválidos.")
         return -1
 
 def show_usuarios_cadastrados ():
     conexao = conectar_banco ()
     cursor = conexao.cursor ()
-    cursor.execute ('''selecte from * usuarios''')
+    cursor.execute ('''select * from usuarios''')
     usuarios = cursor.fetchall ()
     conexao.close ()
     return usuarios
