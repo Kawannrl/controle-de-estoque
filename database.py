@@ -72,10 +72,27 @@ def show_usuarios_cadastrados ():
 
 def conectar_produtos_do_banco():
     conexao = conectar_banco()
-    cursor = conexao.cursor
+    cursor = conexao.cursor ()
     cursor.execute('''SELECT codigo, nome, valor, estoque, categoria FROM produto''')
     produtos = {}
     for codigo, nome, valor in cursor.fetchall():
         produtos[str(codigo).zfill(3)] = {"nome": nome, "preco": valor}
     conexao.close()
     return produtos
+
+def adicionar_produto(nome, valor, codigo, estoque, categoria):
+    conexao = conectar_banco()
+    cursor = conexao.cursor()
+    try:
+        cursor.execute(
+            '''INSERT INTO produto (nome, valor, codigo, estoque, categoria)
+               VALUES (?, ?, ?, ?, ?)''',
+            (nome, valor, codigo, estoque, categoria)
+        )
+        conexao.commit()
+        return True
+    except sqlite3.IntegrityError:
+        print("Erro: Produto com código já existente ou dados inválidos.")
+        return False
+    finally:
+        conexao.close()

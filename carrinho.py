@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from database import conectar_produtos_do_banco
 
 ctk.set_appearance_mode ("dark")
 ctk.set_default_color_theme ("dark-blue")
@@ -8,7 +9,7 @@ class CarrinhoApp (ctk.CTk):
         super ().__init__ ()
         self.title ("Carrinho de Compras - Funcionário")
         self.geometry ("600x500")
-        self.produtos = self.carregar_produtos_do_banco()
+        self.produtos = conectar_produtos_do_banco ()
         self.carrinho = {}
 
         self.frame_top = ctk.CTkFrame (self)
