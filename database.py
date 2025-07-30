@@ -13,6 +13,7 @@ def criar_tabelas ():
     cursor = conexao.cursor ()
     cursor.execute ('''create table if not exists produto (id integer primary key, nome text, valor real, codigo integer, estoque integer, categoria text)''')
     cursor.execute ('''create table if not exists usuarios (id integer primary key, cpf integer, nome text, senha text, classificacao text not null check( classificacao IN ('admin', 'usuario') ))''')
+    cursor.execute ('''create table if not exists vendas (id integer primary key autoincrement, codigo text, quantidade integer, total real, data timestamp default current_timestamp)''')
     
     try: 
         cursor.execute ('''insert into usuarios (cpf, nome, senha, classificacao) values ('07472708216', 'roma', '101224', 'admin')''')
@@ -68,3 +69,13 @@ def show_usuarios_cadastrados ():
     usuarios = cursor.fetchall ()
     conexao.close ()
     return usuarios
+
+def conectar_produtos_do_banco():
+    conexao = conectar_banco()
+    cursor = conexao.cursor
+    cursor.execute('''SELECT codigo, nome, valor, estoque, categoria FROM produto''')
+    produtos = {}
+    for codigo, nome, valor in cursor.fetchall():
+        produtos[str(codigo).zfill(3)] = {"nome": nome, "preco": valor}
+    conexao.close()
+    return produtos
