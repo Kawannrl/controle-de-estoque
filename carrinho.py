@@ -5,13 +5,12 @@ from database import buscar_produtos_por_codigos, efetuar_compras_em_lote
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
 
-class CarrinhoApp(ctk.CTk):
-    def __init__(self):
-        super().__init__()
-        self.title("Carrinho de Compras - Funcionário")
-        self.geometry("600x500")
-
-        self.produtos_banco = {}
+class CarrinhoApp (ctk.CTk):
+    def __init__ (self):
+        super ().__init__ ()
+        self.title ("Carrinho de Compras - Funcionário")
+        self.geometry ("600x500")
+        self.produtos = self.carregar_produtos_do_banco()
         self.carrinho = {}
 
         self.frame_top = ctk.CTkFrame(self)
@@ -130,3 +129,9 @@ class CarrinhoApp(ctk.CTk):
 
         self.carrinho = {}
         self.atualizar_lista()
+
+        # Aqui você pode adicionar formas de pagamento, QR Code, etc.
+
+if __name__ == "__main__":
+    CarrinhoApp().mainloop()
+
