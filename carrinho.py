@@ -1,6 +1,7 @@
 import customtkinter as ctk
+
 from tkinter import messagebox
-from database import buscar_produtos_por_codigos, efetuar_compras_em_lote
+from database import buscar_produtos_por_codigos, efetuar_compras_em_lote, conectar_produtos_do_banco
 
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
@@ -10,7 +11,7 @@ class CarrinhoApp (ctk.CTk):
         super ().__init__ ()
         self.title ("Carrinho de Compras - Funcionário")
         self.geometry ("600x500")
-        self.produtos = self.carregar_produtos_do_banco()
+        self.produtos = conectar_produtos_do_banco ()
         self.carrinho = {}
 
         self.frame_top = ctk.CTkFrame(self)
