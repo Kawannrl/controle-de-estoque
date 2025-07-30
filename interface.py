@@ -74,29 +74,32 @@ class LoginApp (ctk.CTk):
 
         ctk.CTkButton (cadastro_tab, text="Cadastrar", command = self.cadastro).pack (padx = 10, pady = 10)
 
-    def login(self):
-        usercpf = self.cpf_cadastro.get()
-        password = self.senha_cadastro.get()
+    def login (self):
+        usercpf = self.cpf_entry.get ()
+        password = self.senha_entry.get ()
         
-        resultado = app.tentar_login(usercpf, password)
+        resultado = app.tentar_login (usercpf, password)
         
         if resultado == 0:
-            tkmb.showinfo("Login Funcionario","Bem-vindo, Funcionario!")
-            CarrinhoApp()
+            tkmb.showinfo ("Login Funcionario","Bem-vindo, Funcionario!")
+            self.destroy () 
+            carrinho = CarrinhoApp ()
+            carrinho.mainloop ()
         elif resultado == 1:
-            tkmb.showinfo("Login admin","Bem-vindo, admin!")
-            Estoque()
+            tkmb.showinfo ("Login admin","Bem-vindo, admin!")
+            self.destroy ()
+            estoque = Estoque ()
+            estoque.mainloop ()
         else:
-            tkmb.showerror("Falha ao realizar login", "CPF ou senha inválidos.")
+            tkmb.showerror ("Falha ao realizar login", "CPF ou senha inválidos.")
 
     def cadastro (self):
         
-        novo_cpf = self.cpf_cadastro.get()
-        novo_nome = self.nome_cadastro.get()
-        nova_senha = self.senha_cadastro.get()
+        novo_cpf = self.cpf_cadastro.get ()
+        novo_nome = self.nome_cadastro.get ()
+        nova_senha = self.senha_cadastro.get ()
         
-
-        if app.tentar_cadastro(novo_cpf, novo_nome, nova_senha):
-                tkmb.showinfo("cadastro realizado","cadastro realizado com sucesso")
+        if app.tentar_cadastro (novo_cpf, novo_nome, nova_senha):
+                tkmb.showinfo ("cadastro realizado","cadastro realizado com sucesso")
         else:
-            tkmb.showerror("falha","falha ao realizar cadastro, tente novamente")  
+            tkmb.showerror ("falha","falha ao realizar cadastro, tente novamente")  

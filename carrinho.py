@@ -3,21 +3,13 @@ import customtkinter as ctk
 ctk.set_appearance_mode ("dark")
 ctk.set_default_color_theme ("dark-blue")
 
-
 class CarrinhoApp (ctk.CTk):
     def __init__ (self):
         super ().__init__ ()
         self.title ("Carrinho de Compras - Funcionário")
         self.geometry ("600x500")
-        
 
-        self.produtos = {
-            "001": {"nome": "Arroz", "preco": 5.50},
-            "002": {"nome": "Feijão", "preco": 7.00},
-            "003": {"nome": "Macarrão", "preco": 4.25},
-            "004": {"nome": "Açúcar", "preco": 3.99}
-        }
-
+        self.produtos = {} 
         self.carrinho = {}
 
         self.frame_top = ctk.CTkFrame (self)
@@ -119,4 +111,4 @@ class CarrinhoApp (ctk.CTk):
         finalizar.pack (pady = 20)
 
 if __name__ == "__main__":
-    app = CarrinhoApp ()
+    CarrinhoApp().mainloop()
