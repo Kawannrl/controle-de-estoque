@@ -11,12 +11,7 @@ class CarrinhoApp (ctk.CTk):
         self.geometry ("600x500")
         
 
-        self.produtos = {
-            "001": {"nome": "Arroz", "preco": 5.50},
-            "002": {"nome": "Feijão", "preco": 7.00},
-            "003": {"nome": "Macarrão", "preco": 4.25},
-            "004": {"nome": "Açúcar", "preco": 3.99}
-        }
+        self.produtos = self.carregar_produtos_do_banco()
 
         self.carrinho = {}
 
