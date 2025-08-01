@@ -54,13 +54,20 @@ class CarrinhoApp (ctk.CTk):
             return
 
         produto = produtos[0]
-        self.produtos_banco[codigo] = produto
+        estoque_disponivel = produto.get("estoque", 0)
 
         if codigo in self.carrinho:
+            if self.carrinho[codigo]["quantidade"] >= estoque_disponivel:
+                messagebox.showinfo("Estoque insuficiente", "Não há mais unidades disponíveis deste produto.")
+                return
             self.carrinho[codigo]["quantidade"] += 1
         else:
+            if estoque_disponivel <= 0:
+                messagebox.showinfo("Estoque esgotado", "Este produto está fora de estoque.")
+                return
             self.carrinho[codigo] = {"quantidade": 1}
 
+        self.produtos[codigo] = produto
         self.atualizar_lista()
 
     def remover_produto(self):
@@ -79,7 +86,7 @@ class CarrinhoApp (ctk.CTk):
         total = 0
 
         for codigo, dados in self.carrinho.items():
-            produto = self.produtos_banco.get(codigo)
+            produto = self.produtos.get(codigo)
             if not produto:
                 continue
 
@@ -121,7 +128,7 @@ class CarrinhoApp (ctk.CTk):
 
         lista_para_salvar = []
         for codigo, dados in self.carrinho.items():
-            produto = self.produtos_banco[codigo]
+            produto = self.produtos[codigo]
             for _ in range(dados["quantidade"]):
                 lista_para_salvar.append(produto)
 

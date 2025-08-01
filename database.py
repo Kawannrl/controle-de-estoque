@@ -14,7 +14,7 @@ def criar_tabelas ():
     cursor = conexao.cursor ()
     cursor.execute ('''create table if not exists produto (id integer primary key, nome text, valor real, codigo integer, estoque integer, categoria text)''')
     cursor.execute ('''create table if not exists usuarios (id integer primary key, cpf integer, nome text, senha text, classificacao text not null check( classificacao IN ('admin', 'usuario') ))''')
-
+    cursor.execute ('''CREATE TABLE IF NOT EXISTS compras_efetuadas (id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, valor REAL, codigo INTEGER, categoria TEXT, data TEXT)''')
     cursor.execute ('''create table if not exists vendas (id integer primary key autoincrement, codigo text, quantidade integer, total real, data timestamp default current_timestamp)''')
     
     try: 
@@ -43,59 +43,63 @@ def criar_usuario (cpf, nome, senha):
         conexao.close ()
         return True
     
-def criar_produto(nome, valor, codigo, estoque, categoria ):
+def criar_produto(nome, valor, codigo, estoque, categoria):
     conexao = conectar_banco()
     cursor = conexao.cursor()
 
-    cursor.execute('''select nome, codigo from usuarios where cpf=?''', (nome, codigo,))
-    produto1 = cursor.fetchall()
-    
-    if produto1:
-        print("este nome já existe e código já existem, tente outro nome e outro codigo de barras")
+    cursor.execute('''SELECT codigo FROM produto WHERE codigo=?''', (codigo,))
+    produto_existente = cursor.fetchone()
+
+    if produto_existente:
+        print("Produto com esse código já existe.")
         return False
-    else:
-        cursor.execute(''' insert into produto(nome, valor, codigo, estoque, categoria)
-                values (?, ?, ?, ?, ?)''', (nome, valor, codigo, estoque, categoria))
-        
-        conexao.commit()
-        return True
+
+    cursor.execute('''
+        INSERT INTO produto (nome, valor, codigo, estoque, categoria)
+        VALUES (?, ?, ?, ?, ?)
+    ''', (nome, valor, codigo, estoque, categoria))
     
+    conexao.commit()
+    conexao.close()
+    return True
+
 def buscar_produtos_por_codigos(codigos):
     conexao = conectar_banco()
     cursor = conexao.cursor()
     placeholders = ','.join('?' for _ in codigos)
     cursor.execute(f'''
-        SELECT nome, valor, codigo, categoria FROM produto WHERE codigo IN ({placeholders})
+        SELECT nome, valor, codigo, categoria, estoque FROM produto WHERE codigo IN ({placeholders})
     ''', codigos)
     produtos = cursor.fetchall()
     conexao.close()
     return [
-        {"nome": nome, "valor": valor, "codigo": codigo, "categoria": categoria}
-        for nome, valor, codigo, categoria in produtos
+        {"nome": nome, "valor": valor, "codigo": codigo, "categoria": categoria, "estoque": estoque}
+        for nome, valor, codigo, categoria, estoque in produtos
     ]
+
     
-def efetuar_compras_em_lote(lista_de_produtos):
-    conexao = conectar_banco()
-    cursor = conexao.cursor()
-    data_compra = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+def efetuar_compras_em_lote (lista_de_produtos):
+    conexao = conectar_banco ()
+    cursor = conexao.cursor ()
+    data_compra = datetime.now ().strftime ("%Y-%m-%d %H:%M:%S")
 
     try:
-        cursor.execute("BEGIN TRANSACTION")
+        cursor.execute ("BEGIN TRANSACTION")
         for produto in lista_de_produtos:
-            cursor.execute('''
+            cursor.execute ('''
                 INSERT INTO compras_efetuadas (nome, valor, codigo, categoria, data)
                 VALUES (?, ?, ?, ?, ?)
-            ''', (produto['nome'], produto['valor'], produto['codigo'], produto['categoria'], data_compra))
+            ''', (produto ['nome'], produto ['valor'], produto ['codigo'], produto ['categoria'], data_compra))
 
-            cursor.execute('''
+            cursor.execute ('''
                 UPDATE produto SET estoque = estoque - 1 WHERE codigo = ? AND estoque > 0
-            ''', (produto['codigo'],))
-        conexao.commit()
+            ''', (produto ['codigo'],))
+        conexao.commit ()
     except Exception as e:
-        conexao.rollback()
-        print("Erro ao registrar compras:", e)
+        conexao.rollback ()
+        print ("Erro ao registrar compras:", e)
     finally:
-        conexao.close()
+        conexao.close ()
 
 def login (cpf, senha):
     conexao = conectar_banco ()
@@ -128,27 +132,34 @@ def show_usuarios_cadastrados ():
 
 def conectar_produtos_do_banco():
     conexao = conectar_banco()
-    cursor = conexao.cursor ()
+    cursor = conexao.cursor()
     cursor.execute('''SELECT codigo, nome, valor, estoque, categoria FROM produto''')
+
     produtos = {}
-    for codigo, nome, valor in cursor.fetchall():
-        produtos[str(codigo).zfill(3)] = {"nome": nome, "preco": valor}
+    for codigo, nome, valor, estoque, categoria in cursor.fetchall():
+        produtos[str(codigo)] = {
+            "nome": nome,
+            "valor": valor,
+            "estoque": estoque,
+            "categoria": categoria
+        }
+
     conexao.close()
     return produtos
 
-def adicionar_produto(nome, valor, codigo, estoque, categoria):
-    conexao = conectar_banco()
-    cursor = conexao.cursor()
+def adicionar_produto (nome, valor, codigo, estoque, categoria):
+    conexao = conectar_banco ()
+    cursor = conexao.cursor ()
     try:
-        cursor.execute(
+        cursor.execute (
             '''INSERT INTO produto (nome, valor, codigo, estoque, categoria)
                VALUES (?, ?, ?, ?, ?)''',
             (nome, valor, codigo, estoque, categoria)
         )
-        conexao.commit()
+        conexao.commit ()
         return True
     except sqlite3.IntegrityError:
-        print("Erro: Produto com código já existente ou dados inválidos.")
+        print ("Erro: Produto com código já existente ou dados inválidos.")
         return False
     finally:
-        conexao.close()
+        conexao.close ()
